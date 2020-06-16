@@ -4,16 +4,8 @@
     [shadow.build :as build]
     [shadow.build.modules :as modules]
     [shadow.build.targets.browser :as browser]
-    [shadow.build.classpath :as cp]))
-
-(defn find-namespaces-by-regexp [{:keys [classpath] :as state} ns-regexp]
-  (->> (cp/get-all-resources classpath)
-    (filter :file)                                          ;; only test with files, ie. not tests in jars.
-    (filter #(= :cljs (:type %)))
-    (map :ns)
-    (filter (fn [ns]
-              (re-find (re-pattern ns-regexp) (str ns))))
-    (into [])))
+    [shadow.build.classpath :as cp]
+    [shadow.build.test-util :as tu]))
 
 ;; Mostly taken from shadow-cljs :browser-test target type.
 (defn modify-config [{::build/keys [config] :as state}]
@@ -33,7 +25,7 @@
         config
 
         dynamically-resolved-namespaces
-        (find-namespaces-by-regexp state ns-regexp)]
+        (tu/find-test-namespaces state{:ns-regexp ns-regexp})]
 
     (-> state
       ;; Add the mounter and all of the resolved cards/tests
