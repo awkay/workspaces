@@ -21,12 +21,7 @@
 
 (defn resolve-cards-and-tests
   [{::build/keys [mode config] :as state}]
-  (let [{:keys [ns-regexp] :or {ns-regexp "-(ws|test)$"}}
-        config
-
-        dynamically-resolved-namespaces
-        (tu/find-test-namespaces state{:ns-regexp ns-regexp})]
-
+  (let [dynamically-resolved-namespaces (tu/find-test-namespaces state config)]
     (-> state
       ;; Add the mounter and all of the resolved cards/tests
       (assoc-in [::modules/config :main :entries] (-> []
