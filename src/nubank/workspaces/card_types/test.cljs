@@ -139,6 +139,7 @@
 
       (<! (async/timeout 1))
       (ui/refresh-card-container test)
+      (app/force-root-render! app)
 
       res)))
 
