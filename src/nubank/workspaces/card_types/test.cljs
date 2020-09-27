@@ -120,20 +120,22 @@
 
 (defmethod test-runner ::test-one [{::keys [app test] :as input}]
   (go
-    (fp/transact! app [::test-result-id "singleton"]
+    (fp/transact! app
       [`(fm/set-props {::running?    true
                        ::enqueued?   false
-                       :test-results {}})])
+                       :test-results {}})]
+      {:ref [::test-result-id "singleton"]})
 
     (<! (async/timeout 1))
     (ui/refresh-card-container test)
     (<! (async/timeout 1))
 
     (let [res (<! (run-test-blocks input))]
-      (fp/transact! app [::test-result-id "singleton"]
+      (fp/transact! app
         [`(fm/set-props {:test-results ~res
                          ::done?       true
-                         ::running?    false})])
+                         ::running?    false})]
+        {:ref [::test-result-id "singleton"]})
 
       (<! (async/timeout 1))
       (ui/refresh-card-container test)
@@ -180,8 +182,9 @@
         (if-not (::disabled? (app-test-block app card-id))
           (let [res (<! (run-test-blocks {::test   card-id
                                           ::blocks test-forms}))]
-            (fp/transact! app [::test-var card-id]
-              [`(fm/set-props {:test-results ~res ::duration ~(::duration res)})]))))
+            (fp/transact! app
+              [`(fm/set-props {:test-results ~res ::duration ~(::duration res)})]
+              {:ref [::test-var card-id]}))))
 
       (let [state    (app/current-state app)
             {::keys [test-vars]} (fdn/db->tree (fp/get-query NSTestGroup) (get-in state [::test-ns test-ns]) state)
@@ -190,17 +193,19 @@
                        (filter seq)
                        (every? test-success?))
             duration (- (now) start)]
-        (fp/transact! app [::test-ns test-ns]
+        (fp/transact! app
           [`(fm/set-props {::done?    true
                            ::running? false
                            ::success? ~success?
-                           ::duration ~duration})])))))
+                           ::duration ~duration})]
+          {:ref [::test-ns test-ns]})))))
 
 (defmethod test-runner ::test-ns [{::keys [test-ns app] :as env}]
   (go
     (let [test-cards (namespace-test-cards test-ns)]
-      (fp/transact! app [::test-ns test-ns]
-        [`(start-ns-test-namespaces {::ns-tests ~test-cards})])
+      (fp/transact! app
+        [`(start-ns-test-namespaces {::ns-tests ~test-cards})]
+        {:ref [::test-ns test-ns]})
 
       (<! (async/timeout 1))
       (<! (run-ns-test-blocks (assoc env ::ns-tests test-cards)))
@@ -228,8 +233,9 @@
     (let [test-namespaces (sort-by first (test-cards-by-namespace))
           start           (now)]
 
-      (fp/transact! app [::all-tests-run "singleton"]
-        [`(start-all-tests {::test-namespaces ~test-namespaces})])
+      (fp/transact! app
+        [`(start-all-tests {::test-namespaces ~test-namespaces})]
+        {:ref [::all-tests-run "singleton"]})
 
       (doseq [[test-ns ns-tests] test-namespaces]
         (if-not (::disabled? (app-ns-test-block app test-ns))
@@ -239,11 +245,12 @@
             {::keys [test-namespaces]} (fdn/db->tree (fp/get-query AllTests) (get-in state [::all-tests-run "singleton"]) state)
             success? (every? ::success? test-namespaces)
             duration (- (now) start)]
-        (fp/transact! app [::all-tests-run "singleton"]
+        (fp/transact! app
           [`(fm/set-props {::done?    true
                            ::running? false
                            ::success? ~success?
-                           ::duration ~duration})]))
+                           ::duration ~duration})]
+          {:ref [::all-tests-run "singleton"]}))
 
       (<! (async/timeout 1))
       (ui/refresh-card-container `test-all)
@@ -272,7 +279,7 @@
 (defn run-card-tests! [test app]
   (let [forms (-> (data/card-definition test) ::test-forms)
         out   (async/promise-chan)]
-    (fp/transact! app [::test-result-id "singleton"] [`(enqueue-test-run {})])
+    (fp/transact! app [`(enqueue-test-run {})] {:ref [::test-result-id "singleton"]})
 
     (put! test-channel {::type   ::test-one
                         ::test   test
@@ -284,7 +291,7 @@
 
 (defn run-ns-tests! [ns app]
   (let [out (async/promise-chan)]
-    (fp/transact! app [::test-ns ns] [`(enqueue-test-run {})])
+    (fp/transact! app [`(enqueue-test-run {})] {:ref [::test-ns ns]})
 
     (put! test-channel {::type    ::test-ns
                         ::test-ns ns
@@ -294,7 +301,7 @@
 
 (defn run-all-tests! [app]
   (let [out (async/promise-chan)]
-    (fp/transact! app [::all-tests-run "singleton"] [`(enqueue-test-run {})])
+    (fp/transact! app [`(enqueue-test-run {})] {:ref [::all-tests-run "singleton"]})
 
     (put! test-channel {::type ::test-all
                         ::done out
