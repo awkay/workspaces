@@ -172,6 +172,22 @@
         (-> (build-ns-test-group (merge env source input))
           (assoc ::running? true ::enqueued? false))))))
 
+(defn update-test-ns-state [test-ns-state state duration]
+  (let [{::keys [test-vars]} (fdn/db->tree (fp/get-query NSTestGroup) test-ns-state state)
+        success? (->> test-vars
+                      (map :test-results)
+                      (filter seq)
+                      (every? test-success?))]
+    (assoc test-ns-state
+           ::done? true
+           ::running? false
+           ::success? success?
+           ::duration duration)))
+
+(fm/defmutation set-ns-test-result [{::keys [test-ns duration]}]
+  (action [{:keys [state]}]
+    (swap! state update-in [::test-ns test-ns] update-test-ns-state @state duration)))
+
 (defn run-ns-test-blocks [{::keys [test-ns app ns-tests]}]
   (go
     (let [start (now)]
@@ -187,18 +203,9 @@
               [`(fm/set-props {:test-results ~res ::duration ~(::duration res)})]
               {:ref [::test-var card-id]}))))
 
-      (let [state    (app/current-state app)
-            {::keys [test-vars]} (fdn/db->tree (fp/get-query NSTestGroup) (get-in state [::test-ns test-ns]) state)
-            success? (->> test-vars
-                       (map :test-results)
-                       (filter seq)
-                       (every? test-success?))
-            duration (- (now) start)]
+      (let [duration (- (now) start)]
         (fp/transact! app
-          [`(fm/set-props {::done?    true
-                           ::running? false
-                           ::success? ~success?
-                           ::duration ~duration})]
+          [`(set-ns-test-result {::test-ns ~test-ns ::duration ~duration})]
           {:ref [::test-ns test-ns]})))))
 
 (defmethod test-runner ::test-ns [{::keys [test-ns app] :as env}]
@@ -229,6 +236,19 @@
              ::running?        true
              ::test-namespaces test-namespaces})))))
 
+(defn update-all-tests-state [all-tests-state state duration]
+  (let [{::keys [test-namespaces]} (fdn/db->tree (fp/get-query AllTests) all-tests-state state)
+        success? (every? ::success? test-namespaces)]
+    (assoc all-tests-state
+           ::done? true
+           ::running? false
+           ::success? success?
+           ::duration duration)))
+
+(fm/defmutation set-all-tests-result [{::keys [duration]}]
+  (action [{:keys [state]}]
+    (swap! state update-in [::all-tests-run "singleton"] update-all-tests-state @state duration)))
+
 (defmethod test-runner ::test-all [{::keys [app] :as env}]
   (go
     (let [test-namespaces (sort-by first (test-cards-by-namespace))
@@ -242,15 +262,9 @@
         (if-not (::disabled? (app-ns-test-block app test-ns))
           (<! (run-ns-test-blocks (assoc env ::test-ns test-ns ::ns-tests ns-tests)))))
 
-      (let [state    (app/current-state app)
-            {::keys [test-namespaces]} (fdn/db->tree (fp/get-query AllTests) (get-in state [::all-tests-run "singleton"]) state)
-            success? (every? ::success? test-namespaces)
-            duration (- (now) start)]
+      (let [duration (- (now) start)]
         (fp/transact! app
-          [`(fm/set-props {::done?    true
-                           ::running? false
-                           ::success? ~success?
-                           ::duration ~duration})]
+          [`(set-all-tests-result {::duration ~duration})]
           {:ref [::all-tests-run "singleton"]}))
 
       (<! (async/timeout 1))
