@@ -442,7 +442,7 @@
            ::ct.fulcro/app  {:shared
                              {::card card}
 
-                             :started-callback
+                             :client-did-mount
                              (fn [app]
                                (run-card-tests! test app))}})
 
@@ -637,7 +637,7 @@
            ::ct.fulcro/app           {:shared
                                       {::card card}
 
-                                      :started-callback
+                                      :client-did-mount
                                       (fn [app]
                                         (run-ns-tests! test-ns app))}})
 
@@ -680,7 +680,7 @@
            ::ct.fulcro/app  {:shared
                              {::card card}
 
-                             :started-callback
+                             :client-did-mount
                              (fn [app]
                                (run-all-tests! app))}})
 
