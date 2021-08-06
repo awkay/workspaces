@@ -60,7 +60,12 @@
                               factory  (fc/factory Root)
                               computed (fc/shared this ::computed)]
                           (if (seq root)
-                            (factory (cond-> root computed (fc/computed computed))))))})))
+                            (factory (cond-> root computed (fc/computed computed)))
+                            (dom/p {:style {:color "red"}}
+                                   (str "Your top-level component cannot be rendered because"
+                                        " the props for it are nil or empty. Please make sure you included a ")
+                                   (dom/strong "non-empty")
+                                   " initial state in that component."))))})))
 
 (defn fulcro-initial-state [{::keys [initial-state wrap-root? root root-state]
                              :or    {wrap-root? true initial-state {}}}]
