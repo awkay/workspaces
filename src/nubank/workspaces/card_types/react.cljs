@@ -2,14 +2,14 @@
   (:require-macros [nubank.workspaces.card-types.react])
   (:require [nubank.workspaces.model :as wsm]
             [nubank.workspaces.card-types.util :as ct.util]
-            [cljsjs.react.dom]
+            ["react-dom" :as ReactDOM]
             [goog.object :as gobj]
             [nubank.workspaces.data :as data]
             [nubank.workspaces.ui :as ui]))
 
 (defn render-at [c node]
   (let [comp (if (fn? c) (c) c)]
-    (js/ReactDOM.render comp node)))
+    (ReactDOM.render comp node)))
 
 (defn react-card-init [{::wsm/keys [card-id]
                         :as        card} state-atom component]
@@ -19,7 +19,7 @@
        (if state-atom
          (remove-watch state-atom ::card-watch))
 
-       (js/ReactDOM.unmountComponentAtNode node))
+       (ReactDOM.unmountComponentAtNode node))
 
      ::wsm/refresh
      (fn [node]

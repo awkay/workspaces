@@ -2,17 +2,17 @@
  ["src"]
 
  :deps
- {cljsjs/highlight                  {:mvn/version "9.12.0-2"}
-  cljsjs/react-grid-layout          {:mvn/version "0.16.6-0"}
-  com.fulcrologic/fulcro            {:mvn/version "3.0.6"}
-  com.fulcrologic/fulcro-garden-css {:mvn/version "3.0.6"}
+ {com.fulcrologic/fulcro            {:mvn/version "3.0.6"}
+  ;com.fulcrologic/fulcro-garden-css {:mvn/version "3.0.6"}
+  com.fulcrologic/fulcro-garden-css {:git/url "https://github.com/danieroux/fulcro-garden-css"
+                                     :sha     "8af3768ac5c766c22987df08ed8df609e1471692"}
   com.wsscode/fuzzy                 {:mvn/version "1.0.0"}
   org.clojure/core.async            {:mvn/version "0.4.490"}}
 
  :aliases
  {:provided
   {:extra-deps
-   {org.clojure/clojure       {:mvn/version "1.9.0"}
+   {org.clojure/clojure       {:mvn/version "1.11.1"}
     org.clojure/clojurescript {:mvn/version "1.10.520"}
     thheller/shadow-cljs      {:mvn/version "2.10.9"}}}
 

@@ -4,10 +4,11 @@
             [goog.style :as style]
             [com.fulcrologic.fulcro-css.localized-dom :as dom]
             [com.fulcrologic.fulcro.components :as fp]
-            [nubank.workspaces.ui.events :as events]))
+            [nubank.workspaces.ui.events :as events]
+            ["react-dom" :as ReactDOM]))
 
 (defn render-subtree-into-container [parent c node]
-  (js/ReactDOM.unstable_renderSubtreeIntoContainer parent c node))
+  (ReactDOM.unstable_renderSubtreeIntoContainer parent c node))
 
 (defn $ [s] (.querySelector js/document s))
 
@@ -33,7 +34,7 @@
    :componentWillUnmount
    (fn [this]
      (when-let [node (gobj/get this "node")]
-       (js/ReactDOM.unmountComponentAtNode node)
+       (ReactDOM.unmountComponentAtNode node)
        (gdom/removeNode node)))
 
    :componentWillReceiveProps
