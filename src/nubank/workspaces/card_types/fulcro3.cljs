@@ -7,9 +7,8 @@
     [com.fulcrologic.fulcro.application :as fapp]
     [com.fulcrologic.fulcro.components :as fc]
     [com.fulcrologic.fulcro.dom :as dom]
-    [com.fulcrologic.fulcro.inspect.inspect-client :as fi.client]
+    [com.fulcrologic.fulcro.react.hooks :as hooks]
     [goog.functions :as gfun]
-    [goog.object :as gobj]
     [nubank.workspaces.card-types.util :as ct.util]
     [nubank.workspaces.data :as data]
     [nubank.workspaces.model :as wsm]
@@ -96,9 +95,7 @@
       instance)))
 
 (defn dispose-app [{::keys [persistence-key] :as app}]
-  (if persistence-key (swap! persistent-apps* dissoc persistence-key))
-  (when-let [app-uuid (fi.client/app-uuid app)]
-    (fi.client/dispose-app app-uuid)))
+  (if persistence-key (swap! persistent-apps* dissoc persistence-key)))
 
 (defn refresh-css! []
   (cssi/upsert-css "fulcro-portal-css" {:component (gen-css-component)}))
@@ -116,28 +113,17 @@
     new-app))
 
 (fc/defsc FulcroPortal
-  [this {::keys [root-node-props]}]
-  {:componentDidMount
-   (fn [this]
-     (let [props (fc/props this)
-           app   (upsert-app props)]
-       (gobj/set this "app" app)
-       (mount-at app props (dom/node this))))
-
-   :componentDidUpdate
-   (fn [this _ _] (some-> (gobj/get this "app") fapp/force-root-render!))
-
-   :componentWillUnmount
-   (fn [this]
-     (let [app (gobj/get this "app")]
-       (dispose-app app)
-       (reset! app nil)
-       (js/ReactDOM.unmountComponentAtNode (dom/node this))))
-
-   :shouldComponentUpdate
-   (fn [this _ _] false)}
-
-  (dom/div root-node-props))
+  [this {::keys [root-node-props] :as props}]
+  {:use-hooks? true}
+  (let [r   (hooks/use-ref nil)
+        app (hooks/use-memo (fn [] (upsert-app props)) [])]
+    (hooks/useEffect
+      (fn []
+        (when-let [node (.-current r)]
+          (mount-at app props node))
+        (fn []))
+      #js [(.-current r)])
+    (dom/div {:ref r} root-node-props)))
 
 (def fulcro-portal* (fc/factory FulcroPortal))
 
@@ -165,10 +151,7 @@
 ; region card definition
 
 (defn inspector-set-app [card-id]
-  (let [{::keys [app]} (data/active-card card-id)
-        app-uuid (fi.client/app-uuid app)]
-    (if app-uuid
-      (fi.client/set-active-app app-uuid))))
+  (let [{::keys [app]} (data/active-card card-id)]))
 
 (def debounced-refresh-css!
   (gfun/debounce refresh-css! 100))

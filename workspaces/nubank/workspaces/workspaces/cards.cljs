@@ -1,14 +1,15 @@
 (ns nubank.workspaces.workspaces.cards
-  (:require [nubank.workspaces.core :as ws]
-            [nubank.workspaces.model :as wsm]
-            [nubank.workspaces.card-types.fulcro3 :as ct.fulcro]
-            [nubank.workspaces.ui.spotlight :as spotlight]
-            [nubank.workspaces.ui.highlight :as highlight]
-            [cljs.test :refer [is testing]]
+  (:require [cljs.test :refer [is testing]]
+            [com.fulcrologic.fulcro-css.localized-dom :as dom]
             [com.fulcrologic.fulcro.components :as comp]
-            [nubank.workspaces.ui :as ui]
+            [com.fulcrologic.fulcro.algorithms.react-interop :as interop]
+            [nubank.workspaces.card-types.fulcro3 :as ct.fulcro]
             [nubank.workspaces.card-types.react :as ct.react]
-            [com.fulcrologic.fulcro-css.localized-dom :as dom]))
+            [nubank.workspaces.core :as ws]
+            [nubank.workspaces.model :as wsm]
+            [nubank.workspaces.ui :as ui]
+            [nubank.workspaces.ui.highlight :as highlight]
+            [nubank.workspaces.ui.spotlight :as spotlight]))
 
 (def options
   '[{::spotlight/type ::spotlight/test
@@ -272,10 +273,6 @@
     {::spotlight/type ::spotlight/test
      ::spotlight/id   nubank.temporary.tests/simpler-err}])
 
-(ws/defcard card-react-error
-  (ct.react/react-card
-    (dom/div "Hello World" :fail)))
-
 (comp/defsc SpotlightContainer
   [this {:keys [spot]}]
   {:initial-state (fn [_]
@@ -297,19 +294,19 @@
 (ws/defcard highlight-card
   {::wsm/align      {:flex "1"}
    ::wsm/card-width 4 ::wsm/card-height 12}
-  (ct.react/react-card
-    (highlight/highlight {::highlight/source   "(ws/defcard\n purchases-charges\n {:nubank.workspaces.model/card-width 7,\n  :nubank.workspaces.model/card-height 11}\n cards/widget-card-config\n (cards/fulcro-card\n  chargeback/PurchaseCharges\n  {:nubank.shuffle.workspaces.card-types/gen-env gen-env,\n   :nubank.shuffle.workspaces.card-types/load true}))"
-                          ::highlight/language "clojure"})))
+  (ct.fulcro/fulcro-card
+    {::ct.fulcro/root          highlight/Highlight
+     ::ct.fulcro/initial-state {::highlight/source   "(ws/defcard\n purchases-charges\n {:nubank.workspaces.model/card-width 7,\n  :nubank.workspaces.model/card-height 11}\n cards/widget-card-config\n (cards/fulcro-card\n  chargeback/PurchaseCharges\n  {:nubank.shuffle.workspaces.card-types/gen-env gen-env,\n   :nubank.shuffle.workspaces.card-types/load true}))"
+                                ::highlight/language "clojure"}}))
 
 (defn child-component [props]
   (dom/div "Inside changed"))
 
-(comp/defsc MyComponent [this _]
-  {}
+(defn MyComponent [_]
   (dom/div {} "Hello World Now it goes"
     (dom/create-element child-component)))
 
-(def my-component (comp/factory MyComponent))
+(def my-component (interop/react-factory MyComponent))
 
 (ws/defcard my-component-card
   {::wsm/align      {:flex "1"}

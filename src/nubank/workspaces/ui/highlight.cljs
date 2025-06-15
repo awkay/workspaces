@@ -1,13 +1,19 @@
 (ns nubank.workspaces.ui.highlight
-  (:require [com.fulcrologic.fulcro.components :as fp]
+  (:require [cljsjs.highlight]
             [com.fulcrologic.fulcro-css.localized-dom :as dom]
-            [cljsjs.highlight]))
+            [com.fulcrologic.fulcro.components :as fp]
+            [com.fulcrologic.fulcro.react.hooks :as hooks]))
 
 (fp/defsc Highlight [this {::keys [source language]}]
-  {:componentDidMount
-   (fn [this]
-     (js/hljs.highlightBlock (dom/node this)))}
-
-  (dom/pre {:className (or language "clojure")} source))
+  {:query [::source ::language]
+   :use-hooks? true}
+  (let [^js ref (hooks/use-ref nil)]
+    (hooks/useEffect
+      (fn []
+        (js/hljs.highlightBlock (.-current ref))
+        js/undefined)
+      #js [])
+    (dom/pre {:ref       ref
+              :className (or language "clojure")} source)))
 
 (def highlight (fp/factory Highlight))
