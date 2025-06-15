@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.awkay</groupId>
   <artifactId>workspaces</artifactId>
-  <version>1.1.1-SNAPSHOT</version>
+  <version>1.1.1</version>
   <name>workspaces</name>
   <description>A library for building React development cards</description>
   <properties>
@@ -15,7 +15,7 @@
     <url>https://github.com/awkay/workspaces</url>
     <connection>scm:git:git://github.com/awkay/workspaces.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/awkay/workspaces.git</developerConnection>
-    <tag>e689b03334c28f3071945ff04d29538f5694601d</tag>
+    <tag>workspaces-1.1.1</tag>
   </scm>
   <distributionManagement>
     <repository>
