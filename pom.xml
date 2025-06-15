@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.awkay</groupId>
   <artifactId>workspaces</artifactId>
-  <version>1.0.4-SNAPSHOT</version>
+  <version>1.1.1-SNAPSHOT</version>
   <name>workspaces</name>
   <description>A library for building React development cards</description>
   <properties>
