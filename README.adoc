@@ -30,3 +30,12 @@ image:https://img.shields.io/clojars/v/com.github.awkay/workspaces.svg[link=http
 This is a Fulcro 3 Port of https://github.com/nubank/workspaces. It is written
 *in* Fulcro 3 so that Fulcro 2 is not on the classpath (which prevents
 mistakes). It will *not* work with Fulcro 2. Use `nubank/workspaces` if you're using Fulcro 2.
+
+= Note
+
+You must add a recent enough version of `react-grid-layout` to the package.json of your main project if you are using
+shadow-cljs, otherwise it will install an outdated one that doesn't work with react 19.
+
+```
+"react-grid-layout": "^1.5.2"
+```

@@ -67,19 +67,9 @@
             <version>1.12.1</version>
         </dependency>
         <dependency>
-            <groupId>cljsjs</groupId>
-            <artifactId>highlight</artifactId>
-            <version>9.12.0-2</version>
-        </dependency>
-        <dependency>
             <groupId>com.fulcrologic</groupId>
             <artifactId>fulcro</artifactId>
             <version>3.9.0-rc1</version>
-        </dependency>
-        <dependency>
-            <groupId>cljsjs</groupId>
-            <artifactId>react-grid-layout</artifactId>
-            <version>0.16.6-0</version>
         </dependency>
         <dependency>
             <groupId>com.wsscode</groupId>

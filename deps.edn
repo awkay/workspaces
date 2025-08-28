@@ -2,9 +2,7 @@
  ["src"]
 
  :deps
- {cljsjs/highlight                  {:mvn/version "9.12.0-2"}
-  cljsjs/react-grid-layout          {:mvn/version "0.16.6-0"}
-  com.fulcrologic/fulcro            {:mvn/version "3.9.0-rc1"}
+ {com.fulcrologic/fulcro            {:mvn/version "3.9.0-rc6"}
   com.fulcrologic/fulcro-garden-css {:mvn/version "3.1.1"}
   com.wsscode/fuzzy                 {:mvn/version "1.0.0"}
   org.clojure/core.async            {:mvn/version "1.8.741"}}
@@ -12,9 +10,9 @@
  :aliases
  {:provided
   {:extra-deps
-   {org.clojure/clojure       {:mvn/version "1.12.0"}
+   {org.clojure/clojure       {:mvn/version "1.12.2"}
     org.clojure/clojurescript {:mvn/version "1.12.42"}
-    thheller/shadow-cljs      {:mvn/version "3.1.1"}}}
+    thheller/shadow-cljs      {:mvn/version "3.2.0"}}}
 
   :dev
   {:extra-paths
