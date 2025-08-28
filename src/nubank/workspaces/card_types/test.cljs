@@ -3,7 +3,6 @@
     [cljs.core.async :as async :refer [go chan go-loop put! close! <!]]
     [cljs.reader :refer [read-string]]
     [cljs.test]
-    [cljsjs.react.dom]
     [clojure.data]
     [com.fulcrologic.fulcro-css.css :as css]
     [com.fulcrologic.fulcro-css.localized-dom :as dom]
