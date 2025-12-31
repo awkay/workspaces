@@ -26,7 +26,7 @@
     (merge {:align-self      "stretch"
             :justify-content "stretch"
             :max-width       "100%"}
-           custom)))
+      custom)))
 
 (defn create-wrapper-node [card]
   (doto (js/document.createElement "div")

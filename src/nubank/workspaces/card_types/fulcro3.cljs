@@ -1,6 +1,7 @@
 (ns nubank.workspaces.card-types.fulcro3
   (:require
     [cljs.spec.alpha :as s]
+    [com.fulcrologic.devtools.common.target :refer [ido]]
     [com.fulcrologic.fulcro-css.css-injection :as cssi]
     [com.fulcrologic.fulcro.algorithms.merge :as f.merge]
     [com.fulcrologic.fulcro.algorithms.normalize :refer [tree->db]]
@@ -8,6 +9,7 @@
     [com.fulcrologic.fulcro.components :as fc]
     [com.fulcrologic.fulcro.dom :as dom]
     [com.fulcrologic.fulcro.react.hooks :as hooks]
+    [fulcro.inspect.tool :as it]
     [goog.functions :as gfun]
     [nubank.workspaces.card-types.util :as ct.util]
     [nubank.workspaces.data :as data]
@@ -91,6 +93,8 @@
                      (assoc-in [:initial-db :fulcro.inspect.core/app-id] app-id))
           ;; TASK: explicit initial state handling
           instance (fapp/fulcro-app app)]
+      ;; Register with Fulcro Inspect (elided in release builds)
+      (ido (it/add-fulcro-inspect! instance))
       (if persistence-key (swap! persistent-apps* assoc persistence-key instance))
       instance)))
 
@@ -151,7 +155,8 @@
 ; region card definition
 
 (defn inspector-set-app [card-id]
-  (let [{::keys [app]} (data/active-card card-id)]))
+  (when-let [{::keys [app]} (data/active-card card-id)]
+    (it/focus-inspector! app)))
 
 (def debounced-refresh-css!
   (gfun/debounce refresh-css! 100))
@@ -165,7 +170,9 @@
       {::wsm/dispose
        (fn [node]
          (dispose-app app)
-         (js/ReactDOM.unmountComponentAtNode node))
+         ;; Fulcro 3.9+ handles React 18+ root unmount internally via fapp/unmount!
+         (when app
+           (fapp/unmount! app)))
 
        ::wsm/refresh
        (fn [_]

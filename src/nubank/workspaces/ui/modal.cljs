@@ -2,12 +2,10 @@
   (:require [goog.dom :as gdom]
             [goog.object :as gobj]
             [goog.style :as style]
+            ["react-dom" :as ReactDOM]
             [com.fulcrologic.fulcro-css.localized-dom :as dom]
             [com.fulcrologic.fulcro.components :as fp]
             [nubank.workspaces.ui.events :as events]))
-
-(defn render-subtree-into-container [parent c node]
-  (js/ReactDOM.unstable_renderSubtreeIntoContainer parent c node))
 
 (defn $ [s] (.querySelector js/document s))
 
@@ -28,25 +26,21 @@
      (let [props (fp/props this)
            node  (create-portal-node props)]
        (gobj/set this "node" node)
-       (render-subtree-into-container this (portal-render-children (fp/children this)) node)))
+       ;; Force re-render now that the portal node exists
+       (.forceUpdate this)))
 
    :componentWillUnmount
    (fn [this]
      (when-let [node (gobj/get this "node")]
-       (js/ReactDOM.unmountComponentAtNode node)
-       (gdom/removeNode node)))
+       (gdom/removeNode node)))}
 
-   :componentWillReceiveProps
-   (fn [this _]
-     (let [node (gobj/get this "node")]
-       (render-subtree-into-container this (portal-render-children (fp/children this)) node)))
-
-   :componentDidUpdate
-   (fn [this _ _]
-     (let [node (gobj/get this "node")]
-       (render-subtree-into-container this (portal-render-children (fp/children this)) node)))}
-
-  (dom/noscript))
+  ;; Use React 18+ createPortal API instead of deprecated renderSubtreeIntoContainer
+  (let [node (gobj/get this "node")]
+    (if node
+      (ReactDOM/createPortal
+        (portal-render-children (fp/children this))
+        node)
+      (dom/noscript))))
 
 (def portal (fp/factory Portal))
 

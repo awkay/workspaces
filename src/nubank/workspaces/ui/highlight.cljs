@@ -5,12 +5,14 @@
             [com.fulcrologic.fulcro.react.hooks :as hooks]))
 
 (fp/defsc Highlight [this {::keys [source language]}]
-  {:query [::source ::language]
+  {:query      [::source ::language]
    :use-hooks? true}
   (let [^js ref (hooks/use-ref nil)]
     (hooks/useEffect
       (fn []
-        ((.highlightBlock hljs) (.-current ref))
+        ;; Use highlightElement instead of deprecated highlightBlock (removed in v11)
+        (when-let [elem (.-current ref)]
+          (.highlightElement hljs elem))
         js/undefined)
       #js [])
     (dom/pre {:ref       ref

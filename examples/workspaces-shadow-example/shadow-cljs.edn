@@ -5,7 +5,8 @@
  {:workspaces {:target     :browser
                :output-dir "resources/public/js/workspaces"
                :asset-path "/js/workspaces"
-               :devtools   {:preloads           [devtools.preload fulcro.inspect.preload]
+               :devtools   {:preloads           [devtools.preload
+                                                 com.fulcrologic.devtools.chrome-preload]
                             :after-load         nubank.workspaces.core/after-load
                             :loader-mode        :eval
                             :http-root          "resources/public"

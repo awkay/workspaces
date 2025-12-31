@@ -1,16 +1,10 @@
 (ns nubank.workspaces.card-types.react
   (:require-macros [nubank.workspaces.card-types.react])
-  (:require [goog.object :as gobj]
-            [nubank.workspaces.card-types.util :as ct.util]
-            [com.fulcrologic.fulcro.dom :as fdom]
+  (:require [nubank.workspaces.card-types.util :as ct.util]
             ["react-dom/client" :as dom]
             [nubank.workspaces.data :as data]
             [nubank.workspaces.model :as wsm]
             [nubank.workspaces.ui :as ui]))
-
-(defn render-at [c node]
-  (let [comp (if (fn? c) (c) c)]
-    (js/ReactDOM.render comp node)))
 
 (defn react-card-init [{::wsm/keys [card-id]
                         :as        card} state-atom component]

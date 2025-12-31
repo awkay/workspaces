@@ -101,11 +101,11 @@
    :componentDidMount (fn [this]
                         (let [{:keys [onBreakpointChange]} (fp/props this)
                               width (-> (gobj/getValueByKeys this "grid")
-                                        (gobj/get "offsetWidth"))
+                                      (gobj/get "offsetWidth"))
                               bp    (->> (rseq breakpoints)
-                                         (filter #(>= width (:breakpoint %)))
-                                         first
-                                         :id)]
+                                      (filter #(>= width (:breakpoint %)))
+                                      first
+                                      :id)]
                           (onBreakpointChange bp)))}
   (dom/create-element GridWithWidth (clj->js (assoc props :ref #(gobj/set this "grid" %)))
     (fp/children this)))

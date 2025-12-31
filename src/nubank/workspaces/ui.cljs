@@ -650,23 +650,21 @@
                                   (comp/transact! this [`(remove-workspace {::workspace-id ~workspace-id})]))} "Delete")))
 
       (dom/div :.grid
-        (if (comp/get-state this :render?)
+        (when (comp/get-state this :render?)
           (grid/grid-layout
-            (cond->
-              {:className          (str "layout " (if workspace-static? "cljs-workflow-static-workflow"))
-               :rowHeight          30
-               :breakpoints        (into {} (map (juxt :id :breakpoint)) grid/breakpoints)
-               :cols               (into {} (map (juxt :id :cols)) grid/breakpoints)
-               :layouts            layouts
-               :draggableHandle    ".workspaces-cljs-card-drag-handle"
-               :onBreakpointChange (fn [bp _]
-                                     (fm/set-value! this ::breakpoint bp))
-               :onLayoutChange     (fn [_ layouts]
-                                     (let [layouts' (->> (js->clj layouts)
-                                                      (into {} (map (fn [[k v]] [k (normalize-layout v)]))))]
-                                       (comp/transact! this [`(update-workspace ~{::workspace-id workspace-id
-                                                                                  ::layouts      layouts'})])))}
-
+            (cond-> {:className          (str "layout " (if workspace-static? "cljs-workflow-static-workflow"))
+                     :rowHeight          30
+                     :breakpoints        (into {} (map (juxt :id :breakpoint)) grid/breakpoints)
+                     :cols               (into {} (map (juxt :id :cols)) grid/breakpoints)
+                     :layouts            layouts
+                     :draggableHandle    ".workspaces-cljs-card-drag-handle"
+                     :onBreakpointChange (fn [bp _]
+                                           (fm/set-value! this ::breakpoint bp))
+                     :onLayoutChange     (fn [_ layouts]
+                                           (let [layouts' (->> (js->clj layouts)
+                                                            (into {} (map (fn [[k v]] [k (normalize-layout v)]))))]
+                                             (comp/transact! this [`(update-workspace ~{::workspace-id workspace-id
+                                                                                        ::layouts      layouts'})])))}
               workspace-static?
               (assoc :isDraggable false :isResizable false
                      :onLayoutChange (fn [_ _])))
@@ -885,15 +883,15 @@
   (let [{::keys [spotlight]} (comp/props this)
         state   (comp/component->state-map this)
         options (-> []
-                    (into (map (fn [[_ {::wsm/keys [card-id test?]}]]
-                                 {::spotlight/type (if test? ::spotlight/test ::spotlight/card)
-                                  ::spotlight/id   card-id}))
-                          (::wsm/card-id state))
-                    (into (map (fn [[_ {::keys [workspace-id workspace-title]}]]
-                                 {::spotlight/type  ::spotlight/workspace
-                                  ::spotlight/id    workspace-id
-                                  ::spotlight/label workspace-title}))
-                          (::workspace-id state)))]
+                  (into (map (fn [[_ {::wsm/keys [card-id test?]}]]
+                               {::spotlight/type (if test? ::spotlight/test ::spotlight/card)
+                                ::spotlight/id   card-id}))
+                    (::wsm/card-id state))
+                  (into (map (fn [[_ {::keys [workspace-id workspace-title]}]]
+                               {::spotlight/type  ::spotlight/workspace
+                                ::spotlight/id    workspace-id
+                                ::spotlight/label workspace-title}))
+                    (::workspace-id state)))]
     (comp/transact! (comp/any->app this) `[(spotlight/reset {::spotlight/options ~options})]
       {:ref (comp/get-ident spotlight/Spotlight spotlight)})
     (fm/set-value! this ::show-spotlight? true)))

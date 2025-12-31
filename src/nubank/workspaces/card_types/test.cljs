@@ -145,7 +145,7 @@
 (declare NSTestGroup)
 
 (defn app-test-block [app ns]
-  (-> app app/current-state  (get-in [::test-var ns])))
+  (-> app app/current-state (get-in [::test-var ns])))
 
 (defn app-ns-test-block [app ns]
   (-> app app/current-state (get-in [::test-ns ns])))
@@ -174,14 +174,14 @@
 (defn update-test-ns-state [test-ns-state state duration]
   (let [{::keys [test-vars]} (fdn/db->tree (fp/get-query NSTestGroup) test-ns-state state)
         success? (->> test-vars
-                      (map :test-results)
-                      (filter seq)
-                      (every? test-success?))]
+                   (map :test-results)
+                   (filter seq)
+                   (every? test-success?))]
     (assoc test-ns-state
-           ::done? true
-           ::running? false
-           ::success? success?
-           ::duration duration)))
+      ::done? true
+      ::running? false
+      ::success? success?
+      ::duration duration)))
 
 (fm/defmutation set-ns-test-result [{::keys [test-ns duration]}]
   (action [{:keys [state]}]
@@ -239,10 +239,10 @@
   (let [{::keys [test-namespaces]} (fdn/db->tree (fp/get-query AllTests) all-tests-state state)
         success? (every? ::success? test-namespaces)]
     (assoc all-tests-state
-           ::done? true
-           ::running? false
-           ::success? success?
-           ::duration duration)))
+      ::done? true
+      ::running? false
+      ::success? success?
+      ::duration duration)))
 
 (fm/defmutation set-all-tests-result [{::keys [duration]}]
   (action [{:keys [state]}]

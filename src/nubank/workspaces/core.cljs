@@ -51,7 +51,7 @@
   Use the selector string to pass a querySelector string to pick the mount node."
   ([] (mount "#app"))
   ([selector]
-   (app/mount! data/app* Root (js/document.querySelector selector)) ))
+   (app/mount! data/app* Root (js/document.querySelector selector))))
 
 (defn before-load
   {:dev/before-load true}

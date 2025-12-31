@@ -39,10 +39,10 @@
   work the same, but also define a card (the original cljs.test/deftest will also be
   called)."
   [sym & forms]
-  (let [fqsym  (if (namespace sym)
-                 sym
-                 (symbol (name (ns-name *ns*)) (name sym)))
-        forms' (mapv (fn [exp] `(fn [] ~exp)) forms)
+  (let [fqsym     (if (namespace sym)
+                    sym
+                    (symbol (name (ns-name *ns*)) (name sym)))
+        forms'    (mapv (fn [exp] `(fn [] ~exp)) forms)
         card-form &form]
     `(do
        (init-test '~fqsym ~forms' '~card-form)

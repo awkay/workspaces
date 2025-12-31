@@ -36,7 +36,7 @@
     {::fsm/handler
      (fn [env]
        (-> env
-           (fsm/activate :searching)))}
+         (fsm/activate :searching)))}
 
     :searching
     {::fsm/events
@@ -48,10 +48,10 @@
        (fn [env]
          (let [{:keys [search-input options] :as data} (fsm/aliased-data env)]
            (-> env
-               (fsm/set-aliased-value :current-options
-                 (if (< (count search-input) 3)
-                   options
-                   (fuzzy-match data))))))}
+             (fsm/set-aliased-value :current-options
+               (if (< (count search-input) 3)
+                 options
+                 (fuzzy-match data))))))}
 
       :exit!
       {::fsm/target-state ::fsm/exit}}}}})

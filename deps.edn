@@ -2,7 +2,7 @@
  ["src"]
 
  :deps
- {com.fulcrologic/fulcro            {:mvn/version "3.9.0-rc6"}
+ {com.fulcrologic/fulcro            {:mvn/version "3.9.0"}
   com.fulcrologic/fulcro-garden-css {:mvn/version "3.1.1"}
   com.wsscode/fuzzy                 {:mvn/version "1.0.0"}
   org.clojure/core.async            {:mvn/version "1.8.741"}}
@@ -10,13 +10,14 @@
  :aliases
  {:provided
   {:extra-deps
-   {org.clojure/clojure       {:mvn/version "1.12.2"}
-    org.clojure/clojurescript {:mvn/version "1.12.42"}
-    thheller/shadow-cljs      {:mvn/version "3.2.0"}}}
+   {org.clojure/clojure       {:mvn/version "1.12.0"}
+    org.clojure/clojurescript {:mvn/version "1.11.132"}
+    thheller/shadow-cljs      {:mvn/version "2.28.20"}}}
 
   :dev
   {:extra-paths
    ["test" "workspaces"]
 
    :extra-deps
-   {binaryage/devtools {:mvn/version "1.0.7"}}}}}
+   {binaryage/devtools              {:mvn/version "1.0.7"}
+    com.fulcrologic/fulcro-inspect  {:mvn/version "1.0.5"}}}}}

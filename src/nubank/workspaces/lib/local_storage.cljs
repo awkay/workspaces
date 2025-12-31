@@ -48,12 +48,12 @@
 
 (comment
   (-> `(:hello {})
-      type)
+    type)
 
   (-> `(:hello {})
-      (write-transit)
-      (read-transit)
-      type)
+    (write-transit)
+    (read-transit)
+    type)
 
   (-> `(:hello {})
     (pr-str)
