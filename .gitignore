@@ -19,3 +19,12 @@ node_modules
 .idea
 *.iml
 public/workspaces/js
+e2e
+.clj-kondo
+*.swp
+.lsp
+.mcp.json
+PLAN.md
+e2e
+playwright.config.ts
+test-results
